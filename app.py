@@ -163,10 +163,9 @@ st.markdown(
        ===================================== */
 
     p,
-    label,
-    span,
-    div {
-        color: #222222;
+    label {
+        color: #222222 !important;
+        -webkit-text-fill-color: #222222 !important;
     }
 
 
@@ -572,18 +571,12 @@ descripciones = {
 }
 
 
+# ==========================================
+# DESCRIPCIÓN DE CATEGORÍA
+# ==========================================
+
 st.markdown(
-    f"""
-    <div class="categoria-info">
-
-        <strong>{categoria}</strong>
-
-        <br><br>
-
-        {descripciones[categoria]}
-
-    </div>
-    """,
+    f'<div class="categoria-info"><strong>{categoria}</strong><br><br>{descripciones[categoria]}</div>',
     unsafe_allow_html=True
 )
 
@@ -905,8 +898,3 @@ if texto_detectado:
 # ==========================================
 
 st.divider()
-
-st.caption(
-    "🌍 TravelLens | Reconocimiento de texto, "
-    "traducción y audio para viajeros"
-)
