@@ -1,4 +1,3 @@
-```python
 import streamlit as st
 import os
 import time
@@ -656,4 +655,3 @@ st.caption(
     "🌍 TravelLens | Reconocimiento de texto, "
     "traducción y audio para viajeros"
 )
-```
