@@ -618,4 +618,3 @@ st.caption(
     "🌍 TravelLens | Reconocimiento de texto, "
     "traducción y audio para viajeros"
 )
-```
