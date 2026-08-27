@@ -2,185 +2,518 @@ import streamlit as st
 import os
 import time
 import glob
-import os
 import cv2
 import numpy as np
 import pytesseract
-from PIL import Image
 from gtts import gTTS
 from googletrans import Translator
 
 
-text=" "
+# ==========================================
+# CONFIGURACIÓN DE LA PÁGINA
+# ==========================================
 
-def text_to_speech(input_language, output_language, text, tld):
-    translation = translator.translate(text, src=input_language, dest=output_language)
-    trans_text = translation.text
-    tts = gTTS(trans_text, lang=output_language, tld=tld, slow=False)
-    try:
-        my_file_name = text[0:20]
-    except:
-        my_file_name = "audio"
-    tts.save(f"temp/{my_file_name}.mp3")
-    return my_file_name, trans_text
+st.set_page_config(
+    page_title="TravelLens",
+    page_icon="🌍",
+    layout="wide"
+)
 
 
-
+# ==========================================
+# FUNCIONES
+# ==========================================
 
 def remove_files(n):
-    mp3_files = glob.glob("temp/*mp3")
+    """Elimina archivos MP3 antiguos."""
+    
+    if not os.path.exists("temp"):
+        os.makedirs("temp")
+
+    mp3_files = glob.glob("temp/*.mp3")
+
     if len(mp3_files) != 0:
         now = time.time()
         n_days = n * 86400
+
         for f in mp3_files:
             if os.stat(f).st_mtime < now - n_days:
                 os.remove(f)
-                print("Deleted ", f)
 
+
+def text_to_speech(input_language, output_language, text, tld):
+    """Traduce un texto y genera un archivo de audio."""
+
+    translator = Translator()
+
+    translation = translator.translate(
+        text,
+        src=input_language,
+        dest=output_language
+    )
+
+    translated_text = translation.text
+
+    tts = gTTS(
+        translated_text,
+        lang=output_language,
+        tld=tld,
+        slow=False
+    )
+
+    file_name = f"audio_{int(time.time())}"
+
+    if not os.path.exists("temp"):
+        os.makedirs("temp")
+
+    audio_path = f"temp/{file_name}.mp3"
+
+    tts.save(audio_path)
+
+    return audio_path, translated_text
+
+
+def procesar_imagen(imagen, aplicar_filtro=False):
+    """Procesa la imagen y extrae el texto utilizando OCR."""
+
+    if aplicar_filtro:
+        imagen = cv2.bitwise_not(imagen)
+
+    img_rgb = cv2.cvtColor(
+        imagen,
+        cv2.COLOR_BGR2RGB
+    )
+
+    texto_detectado = pytesseract.image_to_string(
+        img_rgb
+    )
+
+    return texto_detectado
+
+
+# ==========================================
+# LIMPIAR ARCHIVOS ANTIGUOS
+# ==========================================
 
 remove_files(7)
-  
 
 
+# ==========================================
+# INTERFAZ PRINCIPAL
+# ==========================================
 
-st.title("Reconocimiento Óptico de Caracteres")
-st.subheader("Elige la fuente de la imágen, esta puede venir de la cámara o cargando un archivo")
+st.title("🌍 TravelLens")
+st.subheader("Tu asistente inteligente de traducción para viajes")
 
-cam_ = st.checkbox("Usar Cámara")
+st.write(
+    """
+    Captura o carga una imagen, reconoce el texto automáticamente,
+    tradúcelo a otro idioma y escúchalo mediante audio.
+    """
+)
 
-if cam_ :
-   img_file_buffer = st.camera_input("Toma una Foto")
-else :
-   img_file_buffer = None
-   
-with st.sidebar:
-      st.subheader("Procesamiento para Cámara")
-      filtro = st.radio("Filtro para imagen con cámara",('Sí', 'No'))
 
-bg_image = st.file_uploader("Cargar Imagen:", type=["png", "jpg"])
-if bg_image is not None:
-    uploaded_file=bg_image
-    st.image(uploaded_file, caption='Imagen cargada.', use_container_width=True)
-    
-    # Guardar la imagen en el sistema de archivos
-    with open(uploaded_file.name, 'wb') as f:
-        f.write(uploaded_file.read())
-    
-    st.success(f"Imagen guardada como {uploaded_file.name}")
-    img_cv = cv2.imread(f'{uploaded_file.name}')
-    img_rgb = cv2.cvtColor(img_cv, cv2.COLOR_BGR2RGB)
-    text= pytesseract.image_to_string(img_rgb)
-st.write(text)  
-    
-      
-if img_file_buffer is not None:
-    # To read image file buffer with OpenCV:
-    bytes_data = img_file_buffer.getvalue()
-    cv2_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
+# ==========================================
+# CATEGORÍAS
+# ==========================================
 
-    
-    if filtro == 'Con Filtro':
-         cv2_img=cv2.bitwise_not(cv2_img)
+st.divider()
+
+st.subheader("🧭 ¿Qué deseas explorar?")
+
+categoria = st.selectbox(
+    "Selecciona una categoría",
+    (
+        "🪧 Señales y avisos",
+        "🍽️ Menús y restaurantes",
+        "🚌 Transporte",
+        "🏛️ Turismo y lugares",
+        "🛍️ Compras y productos",
+        "📄 Documentos"
+    )
+)
+
+
+# ==========================================
+# INFORMACIÓN SEGÚN CATEGORÍA
+# ==========================================
+
+if categoria == "🪧 Señales y avisos":
+
+    st.info(
+        "📸 Toma una fotografía de señales, advertencias o indicaciones "
+        "para comprender rápidamente su significado."
+    )
+
+
+elif categoria == "🍽️ Menús y restaurantes":
+
+    st.info(
+        "🍽️ Fotografía un menú para reconocer y traducir los nombres "
+        "de los platos y la información del restaurante."
+    )
+
+
+elif categoria == "🚌 Transporte":
+
+    st.info(
+        "🚌 Captura horarios, rutas, estaciones o información "
+        "relacionada con el transporte."
+    )
+
+
+elif categoria == "🏛️ Turismo y lugares":
+
+    st.info(
+        "🏛️ Fotografía información sobre museos, monumentos, "
+        "lugares turísticos o sitios de interés."
+    )
+
+
+elif categoria == "🛍️ Compras y productos":
+
+    st.info(
+        "🛍️ Captura etiquetas, instrucciones o información "
+        "de productos durante tu viaje."
+    )
+
+
+elif categoria == "📄 Documentos":
+
+    st.info(
+        "📄 Carga o fotografía documentos, reservas, formularios "
+        "o información importante."
+    )
+
+
+# ==========================================
+# CAPTURA DE IMAGEN
+# ==========================================
+
+st.divider()
+
+st.subheader("📸 Captura la información")
+
+tipo_captura = st.radio(
+    "¿Cómo deseas obtener la imagen?",
+    (
+        "Usar cámara",
+        "Cargar imagen"
+    ),
+    horizontal=True
+)
+
+
+imagen = None
+
+
+# ==========================================
+# CÁMARA
+# ==========================================
+
+if tipo_captura == "Usar cámara":
+
+    imagen_camara = st.camera_input(
+        "Toma una fotografía"
+    )
+
+    if imagen_camara is not None:
+
+        bytes_data = imagen_camara.getvalue()
+
+        imagen = cv2.imdecode(
+            np.frombuffer(
+                bytes_data,
+                np.uint8
+            ),
+            cv2.IMREAD_COLOR
+        )
+
+
+# ==========================================
+# CARGAR IMAGEN
+# ==========================================
+
+else:
+
+    imagen_archivo = st.file_uploader(
+        "Carga una imagen",
+        type=["png", "jpg", "jpeg"]
+    )
+
+    if imagen_archivo is not None:
+
+        bytes_data = imagen_archivo.getvalue()
+
+        imagen = cv2.imdecode(
+            np.frombuffer(
+                bytes_data,
+                np.uint8
+            ),
+            cv2.IMREAD_COLOR
+        )
+
+
+# ==========================================
+# PROCESAMIENTO DE IMAGEN
+# ==========================================
+
+texto_detectado = ""
+
+
+if imagen is not None:
+
+    st.divider()
+
+    st.subheader("🖼️ Imagen seleccionada")
+
+    imagen_rgb = cv2.cvtColor(
+        imagen,
+        cv2.COLOR_BGR2RGB
+    )
+
+    st.image(
+        imagen_rgb,
+        use_container_width=True
+    )
+
+
+    aplicar_filtro = st.checkbox(
+        "Aplicar filtro de contraste"
+    )
+
+
+    if aplicar_filtro:
+
+        imagen_procesada = cv2.bitwise_not(
+            imagen
+        )
+
     else:
-        cv2_img= cv2_img
-          
-        
-    img_rgb = cv2.cvtColor(cv2_img, cv2.COLOR_BGR2RGB)
-    text=pytesseract.image_to_string(img_rgb) 
-    st.write(text) 
+
+        imagen_procesada = imagen
+
+
+    # ==========================================
+    # OCR
+    # ==========================================
+
+    if st.button("🔍 Reconocer texto"):
+
+        with st.spinner(
+            "Analizando la imagen..."
+        ):
+
+            texto_detectado = procesar_imagen(
+                imagen,
+                aplicar_filtro
+            )
+
+            st.session_state["texto_detectado"] = texto_detectado
+
+
+# Recuperar texto detectado
+if "texto_detectado" in st.session_state:
+
+    texto_detectado = st.session_state[
+        "texto_detectado"
+    ]
+
+
+# ==========================================
+# MOSTRAR TEXTO DETECTADO
+# ==========================================
+
+if texto_detectado:
+
+    st.divider()
+
+    st.subheader("🔍 Texto detectado")
+
+    st.text_area(
+        "Texto reconocido mediante OCR",
+        texto_detectado,
+        height=200
+    )
+
+
+# ==========================================
+# SIDEBAR - TRADUCCIÓN
+# ==========================================
 
 with st.sidebar:
-      st.subheader("Parámetros de traducción")
-      
-      try:
-          os.mkdir("temp")
-      except:
-          pass
-      #st.title("Text to speech")
-      translator = Translator()
-      
-      #text = st.text_input("Enter text")
-      in_lang = st.selectbox(
-          "Seleccione el lenguaje de entrada",
-          ("Ingles", "Español", "Bengali", "koreano", "Mandarin", "Japones"),
-      )
-      if in_lang == "Ingles":
-          input_language = "en"
-      elif in_lang == "Español":
-          input_language = "es"
-      elif in_lang == "Bengali":
-          input_language = "bn"
-      elif in_lang == "koreano":
-          input_language = "ko"
-      elif in_lang == "Mandarin":
-          input_language = "zh-cn"
-      elif in_lang == "Japones":
-          input_language = "ja"
-      
-      out_lang = st.selectbox(
-          "Select your output language",
-          ("Ingles", "Español", "Bengali", "koreano", "Mandarin", "Japones"),
-      )
-      if out_lang == "Ingles":
-          output_language = "en"
-      elif out_lang == "Español":
-          output_language = "es"
-      elif out_lang == "Bengali":
-          output_language = "bn"
-      elif out_lang == "koreano":
-          output_language = "ko"
-      elif out_lang == "Chinese":
-          output_language = "zh-cn"
-      elif out_lang == "Japones":
-          output_language = "ja"
-      
-      english_accent = st.selectbox(
-          "Seleccione el acento",
-          (
-              "Default",
-              "India",
-              "United Kingdom",
-              "United States",
-              "Canada",
-              "Australia",
-              "Ireland",
-              "South Africa",
-          ),
-      )
-      
-      if english_accent == "Default":
-          tld = "com"
-      elif english_accent == "India":
-          tld = "co.in"
-      
-      elif english_accent == "United Kingdom":
-          tld = "co.uk"
-      elif english_accent == "United States":
-          tld = "com"
-      elif english_accent == "Canada":
-          tld = "ca"
-      elif english_accent == "Australia":
-          tld = "com.au"
-      elif english_accent == "Ireland":
-          tld = "ie"
-      elif english_accent == "South Africa":
-          tld = "co.za"
 
-      display_output_text = st.checkbox("Mostrar texto")
-
-      if st.button("convert"):
-          result, output_text = text_to_speech(input_language, output_language, text, tld)
-          audio_file = open(f"temp/{result}.mp3", "rb")
-          audio_bytes = audio_file.read()
-          st.markdown(f"## Tu audio:")
-          st.audio(audio_bytes, format="audio/mp3", start_time=0)
-      
-          if display_output_text:
-              st.markdown(f"## Texto de salida:")
-              st.write(f" {output_text}")
+    st.header("🌐 Traducción")
 
 
+    idiomas = {
+        "Inglés": "en",
+        "Español": "es",
+        "Bengalí": "bn",
+        "Coreano": "ko",
+        "Mandarín": "zh-cn",
+        "Japonés": "ja",
+        "Francés": "fr",
+        "Alemán": "de",
+        "Italiano": "it",
+        "Portugués": "pt"
+    }
 
+
+    idioma_entrada_nombre = st.selectbox(
+        "Idioma del texto detectado",
+        list(idiomas.keys())
+    )
+
+
+    idioma_salida_nombre = st.selectbox(
+        "Traducir a",
+        list(idiomas.keys()),
+        index=1
+    )
+
+
+    input_language = idiomas[
+        idioma_entrada_nombre
+    ]
+
+    output_language = idiomas[
+        idioma_salida_nombre
+    ]
+
+
+    # ==========================================
+    # ACENTO
+    # ==========================================
+
+    st.subheader("🔊 Configuración de voz")
+
+
+    acento = st.selectbox(
+        "Selecciona el acento",
+        (
+            "Predeterminado",
+            "India",
+            "Reino Unido",
+            "Estados Unidos",
+            "Canadá",
+            "Australia",
+            "Irlanda",
+            "Sudáfrica"
+        )
+    )
+
+
+    acentos = {
+
+        "Predeterminado": "com",
+        "India": "co.in",
+        "Reino Unido": "co.uk",
+        "Estados Unidos": "com",
+        "Canadá": "ca",
+        "Australia": "com.au",
+        "Irlanda": "ie",
+        "Sudáfrica": "co.za"
+
+    }
+
+
+    tld = acentos[acento]
+
+
+    mostrar_texto = st.checkbox(
+        "Mostrar traducción",
+        value=True
+    )
+
+
+# ==========================================
+# TRADUCIR Y GENERAR AUDIO
+# ==========================================
+
+if texto_detectado:
+
+    st.divider()
+
+    st.subheader("🌐 Traducción y audio")
+
+
+    if st.button("🌍 Traducir y escuchar"):
+
+        with st.spinner(
+            "Traduciendo y generando audio..."
+        ):
+
+            try:
+
+                audio_path, texto_traducido = (
+                    text_to_speech(
+                        input_language,
+                        output_language,
+                        texto_detectado,
+                        tld
+                    )
+                )
+
+
+                st.success(
+                    "¡Traducción completada!"
+                )
+
+
+                if mostrar_texto:
+
+                    st.subheader(
+                        "🌐 Texto traducido"
+                    )
+
+                    st.write(
+                        texto_traducido
+                    )
+
+
+                st.subheader(
+                    "🔊 Escuchar traducción"
+                )
+
+
+                with open(
+                    audio_path,
+                    "rb"
+                ) as audio_file:
+
+                    audio_bytes = (
+                        audio_file.read()
+                    )
+
+
+                st.audio(
+                    audio_bytes,
+                    format="audio/mp3"
+                )
+
+
+            except Exception as e:
+
+                st.error(
+                    "Ocurrió un error durante "
+                    "la traducción o generación "
+                    "del audio."
+                )
+
+                st.write(e)
+
+
+# ==========================================
+# FOOTER
+# ==========================================
+
+st.divider()
+
+st.caption(
+    "🌍 TravelLens | Reconocimiento de texto, "
+    "traducción y audio para viajeros"
+)
 
  
     
