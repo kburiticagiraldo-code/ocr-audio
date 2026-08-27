@@ -127,12 +127,12 @@ st.markdown(
        ===================================== */
 
     .stApp {
-        background-color: #F7F5F0;
+        background-color: #F7F5F0 !important;
     }
 
 
     /* =====================================
-       TÍTULO TRAVELLENS
+       TÍTULO PRINCIPAL
        ===================================== */
 
     .titulo-travel {
@@ -140,10 +140,7 @@ st.markdown(
         font-weight: 800;
         margin-bottom: 0px;
 
-        /* Fuerza el color negro */
         color: #000000 !important;
-
-        /* Evita que Streamlit cambie el color */
         -webkit-text-fill-color: #000000 !important;
     }
 
@@ -154,33 +151,191 @@ st.markdown(
 
     .subtitulo-travel {
         font-size: 22px;
-        color: #555555 !important;
         margin-top: 0px;
+
+        color: #333333 !important;
+        -webkit-text-fill-color: #333333 !important;
     }
 
 
     /* =====================================
-       TARJETA DE CATEGORÍA
+       TODOS LOS TEXTOS GENERALES
        ===================================== */
 
-    .categoria-info {
-        background-color: white;
-        padding: 20px;
-        border-radius: 15px;
-        border: 1px solid #E5E5E5;
-        margin-top: 10px;
-        margin-bottom: 20px;
+    p,
+    label,
+    span,
+    div {
         color: #222222;
     }
 
 
     /* =====================================
-       SEPARADORES
+       TÍTULOS DE STREAMLIT
        ===================================== */
 
-    hr {
-        margin-top: 25px;
-        margin-bottom: 25px;
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+
+        color: #000000 !important;
+
+        -webkit-text-fill-color: #000000 !important;
+    }
+
+
+    /* =====================================
+       TEXTOS DE LOS WIDGETS
+       ===================================== */
+
+    .stSelectbox label,
+    .stRadio label,
+    .stCheckbox label,
+    .stFileUploader label,
+    .stTextArea label {
+
+        color: #222222 !important;
+
+        -webkit-text-fill-color: #222222 !important;
+    }
+
+
+    /* =====================================
+       TEXTO DENTRO DE SELECTBOX
+       ===================================== */
+
+    .stSelectbox div,
+    .stSelectbox span {
+
+        color: #222222 !important;
+
+        -webkit-text-fill-color: #222222 !important;
+    }
+
+
+    /* =====================================
+       RADIO BUTTON
+       ===================================== */
+
+    .stRadio div,
+    .stRadio span {
+
+        color: #222222 !important;
+
+        -webkit-text-fill-color: #222222 !important;
+    }
+
+
+    /* =====================================
+       CHECKBOX
+       ===================================== */
+
+    .stCheckbox div,
+    .stCheckbox span {
+
+        color: #222222 !important;
+
+        -webkit-text-fill-color: #222222 !important;
+    }
+
+
+    /* =====================================
+       INPUTS
+       ===================================== */
+
+    input,
+    textarea {
+
+        color: #222222 !important;
+
+        background-color: #FFFFFF !important;
+
+        -webkit-text-fill-color: #222222 !important;
+    }
+
+
+    /* =====================================
+       ÁREA DE TEXTO
+       ===================================== */
+
+    .stTextArea textarea {
+
+        color: #222222 !important;
+
+        background-color: #FFFFFF !important;
+
+        -webkit-text-fill-color: #222222 !important;
+    }
+
+
+    /* =====================================
+       SELECTBOX
+       ===================================== */
+
+    [data-baseweb="select"] {
+
+        background-color: #FFFFFF !important;
+    }
+
+
+    [data-baseweb="select"] * {
+
+        color: #222222 !important;
+
+        -webkit-text-fill-color: #222222 !important;
+    }
+
+
+    /* =====================================
+       TARJETAS DE CATEGORÍA
+       ===================================== */
+
+    .categoria-info {
+
+        background-color: #FFFFFF !important;
+
+        padding: 20px;
+
+        border-radius: 15px;
+
+        border: 1px solid #E5E5E5;
+
+        margin-top: 10px;
+
+        margin-bottom: 20px;
+
+        color: #222222 !important;
+    }
+
+
+    .categoria-info strong {
+
+        color: #000000 !important;
+
+        -webkit-text-fill-color: #000000 !important;
+    }
+
+
+    /* =====================================
+       MENSAJES INFO
+       ===================================== */
+
+    [data-testid="stAlert"] {
+
+        color: #222222 !important;
+
+        background-color: #FFFFFF !important;
+    }
+
+
+    [data-testid="stAlert"] p {
+
+        color: #222222 !important;
+
+        -webkit-text-fill-color: #222222 !important;
     }
 
 
@@ -189,8 +344,103 @@ st.markdown(
        ===================================== */
 
     .stButton > button {
+
+        background-color: #FFFFFF !important;
+
+        color: #000000 !important;
+
+        -webkit-text-fill-color: #000000 !important;
+
+        border: 1px solid #CCCCCC;
+
         border-radius: 10px;
+
         font-weight: 600;
+    }
+
+
+    .stButton > button:hover {
+
+        background-color: #EEEEEE !important;
+
+        color: #000000 !important;
+
+        -webkit-text-fill-color: #000000 !important;
+    }
+
+
+    /* =====================================
+       FILE UPLOADER
+       ===================================== */
+
+    [data-testid="stFileUploader"] {
+
+        background-color: #FFFFFF !important;
+
+        border-radius: 10px;
+
+        padding: 10px;
+    }
+
+
+    [data-testid="stFileUploader"] * {
+
+        color: #222222 !important;
+
+        -webkit-text-fill-color: #222222 !important;
+    }
+
+
+    /* =====================================
+       SIDEBAR
+       ===================================== */
+
+    [data-testid="stSidebar"] {
+
+        background-color: #FFFFFF !important;
+    }
+
+
+    [data-testid="stSidebar"] * {
+
+        color: #222222 !important;
+
+        -webkit-text-fill-color: #222222 !important;
+    }
+
+
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] h4 {
+
+        color: #000000 !important;
+
+        -webkit-text-fill-color: #000000 !important;
+    }
+
+
+    /* =====================================
+       CAPTION
+       ===================================== */
+
+    .stCaption {
+
+        color: #555555 !important;
+
+        -webkit-text-fill-color: #555555 !important;
+    }
+
+
+    /* =====================================
+       SEPARADORES
+       ===================================== */
+
+    hr {
+
+        margin-top: 25px;
+
+        margin-bottom: 25px;
     }
 
 
@@ -325,8 +575,13 @@ descripciones = {
 st.markdown(
     f"""
     <div class="categoria-info">
-        <strong>{categoria}</strong><br><br>
+
+        <strong>{categoria}</strong>
+
+        <br><br>
+
         {descripciones[categoria]}
+
     </div>
     """,
     unsafe_allow_html=True
