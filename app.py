@@ -1,3 +1,4 @@
+```python
 import streamlit as st
 import os
 import time
@@ -122,25 +123,47 @@ st.markdown(
     """
     <style>
 
-    /* Fondo general */
+    /* =====================================
+       FONDO GENERAL
+       ===================================== */
+
     .stApp {
         background-color: #F7F5F0;
     }
 
-    /* Título */
+
+    /* =====================================
+       TÍTULO TRAVELLENS
+       ===================================== */
+
     .titulo-travel {
         font-size: 55px;
         font-weight: 800;
         margin-bottom: 0px;
+
+        /* Fuerza el color negro */
+        color: #000000 !important;
+
+        /* Evita que Streamlit cambie el color */
+        -webkit-text-fill-color: #000000 !important;
     }
+
+
+    /* =====================================
+       SUBTÍTULO
+       ===================================== */
 
     .subtitulo-travel {
         font-size: 22px;
-        color: #555555;
+        color: #555555 !important;
         margin-top: 0px;
     }
 
-    /* Tarjeta de categoría */
+
+    /* =====================================
+       TARJETA DE CATEGORÍA
+       ===================================== */
+
     .categoria-info {
         background-color: white;
         padding: 20px;
@@ -148,13 +171,29 @@ st.markdown(
         border: 1px solid #E5E5E5;
         margin-top: 10px;
         margin-bottom: 20px;
+        color: #222222;
     }
 
-    /* Separadores */
+
+    /* =====================================
+       SEPARADORES
+       ===================================== */
+
     hr {
         margin-top: 25px;
         margin-bottom: 25px;
     }
+
+
+    /* =====================================
+       BOTONES
+       ===================================== */
+
+    .stButton > button {
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
 
     </style>
     """,
@@ -177,7 +216,6 @@ st.markdown(
     '</div>',
     unsafe_allow_html=True
 )
-
 
 st.write("")
 
@@ -209,7 +247,7 @@ else:
 st.write(
     """
     **Captura, comprende y escucha.**
-    
+
     TravelLens utiliza reconocimiento óptico de caracteres,
     traducción y síntesis de voz para ayudarte a comprender
     información durante tus viajes.
@@ -618,3 +656,4 @@ st.caption(
     "🌍 TravelLens | Reconocimiento de texto, "
     "traducción y audio para viajeros"
 )
+```
