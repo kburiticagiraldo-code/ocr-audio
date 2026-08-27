@@ -1,3 +1,4 @@
+```python
 import streamlit as st
 import os
 import time
@@ -26,7 +27,7 @@ st.set_page_config(
 
 def remove_files(n):
     """Elimina archivos MP3 antiguos."""
-    
+
     if not os.path.exists("temp"):
         os.makedirs("temp")
 
@@ -74,7 +75,7 @@ def text_to_speech(input_language, output_language, text, tld):
 
 
 def procesar_imagen(imagen, aplicar_filtro=False):
-    """Procesa la imagen y extrae el texto utilizando OCR."""
+    """Procesa la imagen y extrae el texto mediante OCR."""
 
     if aplicar_filtro:
         imagen = cv2.bitwise_not(imagen)
@@ -99,16 +100,120 @@ remove_files(7)
 
 
 # ==========================================
-# INTERFAZ PRINCIPAL
+# RUTAS DE IMÁGENES
 # ==========================================
 
-st.title("🌍 TravelLens")
-st.subheader("Tu asistente inteligente de traducción para viajes")
+ASSETS = "assets"
+
+imagenes = {
+    "🪧 Señales y avisos": os.path.join(ASSETS, "senales.jpg"),
+    "🍽️ Menús y restaurantes": os.path.join(ASSETS, "menus.jpg"),
+    "🚌 Transporte": os.path.join(ASSETS, "transporte.jpg"),
+    "🏛️ Turismo y lugares": os.path.join(ASSETS, "turismo.jpg"),
+    "🛍️ Compras y productos": os.path.join(ASSETS, "compras.jpg"),
+    "📄 Documentos": os.path.join(ASSETS, "documentos.jpg")
+}
+
+
+# ==========================================
+# ESTILOS PERSONALIZADOS
+# ==========================================
+
+st.markdown(
+    """
+    <style>
+
+    /* Fondo general */
+    .stApp {
+        background-color: #F7F5F0;
+    }
+
+    /* Título */
+    .titulo-travel {
+        font-size: 55px;
+        font-weight: 800;
+        margin-bottom: 0px;
+    }
+
+    .subtitulo-travel {
+        font-size: 22px;
+        color: #555555;
+        margin-top: 0px;
+    }
+
+    /* Tarjeta de categoría */
+    .categoria-info {
+        background-color: white;
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid #E5E5E5;
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* Separadores */
+    hr {
+        margin-top: 25px;
+        margin-bottom: 25px;
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
+# ==========================================
+# HEADER
+# ==========================================
+
+st.markdown(
+    '<div class="titulo-travel">🌍 TravelLens</div>',
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    '<div class="subtitulo-travel">'
+    'Tu asistente inteligente para viajar sin barreras de idioma.'
+    '</div>',
+    unsafe_allow_html=True
+)
+
+
+st.write("")
+
+
+# ==========================================
+# IMAGEN DE PORTADA
+# ==========================================
+
+portada = os.path.join(
+    ASSETS,
+    "portada.jpg"
+)
+
+if os.path.exists(portada):
+
+    st.image(
+        portada,
+        use_container_width=True
+    )
+
+else:
+
+    st.warning(
+        "No se encontró la imagen de portada. "
+        "Agrega 'assets/portada.jpg' a tu repositorio."
+    )
+
 
 st.write(
     """
-    Captura o carga una imagen, reconoce el texto automáticamente,
-    tradúcelo a otro idioma y escúchalo mediante audio.
+    **Captura, comprende y escucha.**
+    
+    TravelLens utiliza reconocimiento óptico de caracteres,
+    traducción y síntesis de voz para ayudarte a comprender
+    información durante tus viajes.
     """
 )
 
@@ -119,7 +224,7 @@ st.write(
 
 st.divider()
 
-st.subheader("🧭 ¿Qué deseas explorar?")
+st.subheader("🧭 ¿Qué necesitas durante tu viaje?")
 
 categoria = st.selectbox(
     "Selecciona una categoría",
@@ -135,55 +240,61 @@ categoria = st.selectbox(
 
 
 # ==========================================
-# INFORMACIÓN SEGÚN CATEGORÍA
+# IMAGEN DE CATEGORÍA
 # ==========================================
 
-if categoria == "🪧 Señales y avisos":
+imagen_categoria = imagenes[categoria]
 
-    st.info(
-        "📸 Toma una fotografía de señales, advertencias o indicaciones "
-        "para comprender rápidamente su significado."
+if os.path.exists(imagen_categoria):
+
+    st.image(
+        imagen_categoria,
+        caption=categoria,
+        use_container_width=True
+    )
+
+else:
+
+    st.warning(
+        f"No se encontró la imagen: {imagen_categoria}"
     )
 
 
-elif categoria == "🍽️ Menús y restaurantes":
+# ==========================================
+# DESCRIPCIÓN DE CATEGORÍA
+# ==========================================
 
-    st.info(
-        "🍽️ Fotografía un menú para reconocer y traducir los nombres "
-        "de los platos y la información del restaurante."
-    )
+descripciones = {
 
+    "🪧 Señales y avisos":
+        "Toma una fotografía de señales, advertencias o indicaciones para comprender rápidamente su significado.",
 
-elif categoria == "🚌 Transporte":
+    "🍽️ Menús y restaurantes":
+        "Fotografía un menú para reconocer y traducir los nombres de los platos y la información del restaurante.",
 
-    st.info(
-        "🚌 Captura horarios, rutas, estaciones o información "
-        "relacionada con el transporte."
-    )
+    "🚌 Transporte":
+        "Captura horarios, rutas, estaciones o información relacionada con el transporte.",
 
+    "🏛️ Turismo y lugares":
+        "Fotografía información sobre museos, monumentos, lugares turísticos o sitios de interés.",
 
-elif categoria == "🏛️ Turismo y lugares":
+    "🛍️ Compras y productos":
+        "Captura etiquetas, instrucciones o información de productos durante tu viaje.",
 
-    st.info(
-        "🏛️ Fotografía información sobre museos, monumentos, "
-        "lugares turísticos o sitios de interés."
-    )
-
-
-elif categoria == "🛍️ Compras y productos":
-
-    st.info(
-        "🛍️ Captura etiquetas, instrucciones o información "
-        "de productos durante tu viaje."
-    )
+    "📄 Documentos":
+        "Carga o fotografía documentos, reservas, formularios o información importante."
+}
 
 
-elif categoria == "📄 Documentos":
-
-    st.info(
-        "📄 Carga o fotografía documentos, reservas, formularios "
-        "o información importante."
-    )
+st.markdown(
+    f"""
+    <div class="categoria-info">
+        <strong>{categoria}</strong><br><br>
+        {descripciones[categoria]}
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 
 # ==========================================
@@ -283,17 +394,6 @@ if imagen is not None:
     )
 
 
-    if aplicar_filtro:
-
-        imagen_procesada = cv2.bitwise_not(
-            imagen
-        )
-
-    else:
-
-        imagen_procesada = imagen
-
-
     # ==========================================
     # OCR
     # ==========================================
@@ -309,10 +409,15 @@ if imagen is not None:
                 aplicar_filtro
             )
 
-            st.session_state["texto_detectado"] = texto_detectado
+            st.session_state[
+                "texto_detectado"
+            ] = texto_detectado
 
 
-# Recuperar texto detectado
+# ==========================================
+# RECUPERAR TEXTO
+# ==========================================
+
 if "texto_detectado" in st.session_state:
 
     texto_detectado = st.session_state[
@@ -321,7 +426,7 @@ if "texto_detectado" in st.session_state:
 
 
 # ==========================================
-# MOSTRAR TEXTO DETECTADO
+# MOSTRAR TEXTO
 # ==========================================
 
 if texto_detectado:
@@ -338,7 +443,7 @@ if texto_detectado:
 
 
 # ==========================================
-# SIDEBAR - TRADUCCIÓN
+# SIDEBAR
 # ==========================================
 
 with st.sidebar:
@@ -347,6 +452,7 @@ with st.sidebar:
 
 
     idiomas = {
+
         "Inglés": "en",
         "Español": "es",
         "Bengalí": "bn",
@@ -357,6 +463,7 @@ with st.sidebar:
         "Alemán": "de",
         "Italiano": "it",
         "Portugués": "pt"
+
     }
 
 
@@ -381,10 +488,6 @@ with st.sidebar:
         idioma_salida_nombre
     ]
 
-
-    # ==========================================
-    # ACENTO
-    # ==========================================
 
     st.subheader("🔊 Configuración de voz")
 
@@ -438,7 +541,9 @@ if texto_detectado:
     st.subheader("🌐 Traducción y audio")
 
 
-    if st.button("🌍 Traducir y escuchar"):
+    if st.button(
+        "🌍 Traducir y escuchar"
+    ):
 
         with st.spinner(
             "Traduciendo y generando audio..."
@@ -514,7 +619,4 @@ st.caption(
     "🌍 TravelLens | Reconocimiento de texto, "
     "traducción y audio para viajeros"
 )
-
- 
-    
-    
+```
